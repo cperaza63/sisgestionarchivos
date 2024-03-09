@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use \Auth;
 
 class UsuarioController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         $usuarios = User::all();
@@ -103,4 +105,35 @@ class UsuarioController extends Controller
             ->with('mensaje','Se eliminó al usuario de la manera correcta')
             ->with('icono','success');
     }
+
+    public function registro(){
+        return view ('auth.registro');
+    }
+
+    public function registro_create(Request $request)
+    {
+        //$datos = request()->all();
+        //return response()->json($datos);
+
+        $request->validate([
+            'name' => 'required|max:100',
+            'email' => 'required|unique:users',
+            'password' => 'required|confirmed',
+        ]);
+
+        $usuario = new User();
+        $usuario->name = $request->name;
+        $usuario->email = $request->email;
+        $usuario->password = Hash::make($request['password']);
+        $usuario->save();
+
+        Auth::login($usuario);
+
+        return redirect('/')
+            ->with('mensaje','Bienvenido al Sistema de Gestión de Archivos')
+            ->with('icono','success');
+
+    }
+
+
 }

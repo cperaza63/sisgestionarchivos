@@ -107,6 +107,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </ul>
                     </li>
 
+                    <li class="nav-item">
+                        <a href="{{url('/admin/mi_unidad')}}" class="nav-link active">
+                            <i class="nav-icon fas"><i class="bi bi-folder-plus"></i></i>
+                            <p>
+                                 Mi Unidad
+                            </p>
+                        </a>
+                    </li>
+
                     @guest
                         @if (Route::has('login'))
                             <li class="nav-item">
@@ -148,9 +157,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
         @if( ($message = Session::get('mensaje')) && ($icono = Session::get('icono')) )
             <script>
                 Swal.fire({
-                    title: "Mensaje",
-                    text: "{{$message}}",
-                    icon: "{{$icono}}"
+                position: "top-end",
+                icon: "{{$icono}}",
+                title: "{{$message}}",
+                showConfirmButton: false,
+                timer: 2000
                 });
             </script>
         @endif
