@@ -65,9 +65,33 @@ class CarpetaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+         //$datos = request()->all();
+         //return response()->json($datos);
+
+        $request->validate([
+            'nombre' => 'required|max:191',
+        ]);
+
+        $id = $request->id;
+        $carpeta = Carpeta::find($id);
+        $carpeta->nombre = $request->nombre;
+        $carpeta->save();
+
+        return redirect()->route('mi_unidad.index')
+            ->with('mensaje','El nombre de la carpeta fue cambiado con éxito')
+            ->with('icono','success');
+    }
+
+    public function update_color(Request $request){
+        //$datos = request()->all();
+        //return response()->json($datos);
+        $id = $request->id;
+        $carpeta = Carpeta::find($id);
+        $carpeta->color = $request->color;
+        $carpeta->save();
+        return back();
     }
 
     /**
@@ -96,6 +120,32 @@ class CarpetaController extends Controller
         return redirect()->back()
             ->with('mensaje','Se creó con éxito una nueva carpeta')
             ->with('icono','success');
+    }
+
+    public function update_subcarpeta (Request $request){
+        $request->validate([
+            'nombre' => 'required|max:191',
+        ]);
+        $id = $request->id;
+        $carpeta = Carpeta::find($id);
+        $carpeta->nombre = $request->nombre;
+        $carpeta->save();
+
+        return redirect()->back()
+        ->with('mensaje','Se actualizó con éxito una nueva sub-carpeta')
+        ->with('icono','success');
+
+    }
+
+    public function update_subcarpeta_color(Request $request){
+        //$datos = request()->all();
+        //return response()->json($datos);
+
+        $id = $request->id;
+        $carpeta = Carpeta::find($id);
+        $carpeta->color = $request->color;
+        $carpeta->save();
+        return back();
     }
 
 

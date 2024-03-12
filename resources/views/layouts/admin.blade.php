@@ -22,6 +22,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Sweetalert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- este estilo se aplica a la caja de las carpetas -->
+    <link rel="stylesheet" href="{{asset('css/cajaCarpeta.css')}}">
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">

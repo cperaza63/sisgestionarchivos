@@ -21,7 +21,16 @@ Route::get('/registro', [App\Http\Controllers\UsuarioController::class, 'registr
 Route::post('/registro', [App\Http\Controllers\UsuarioController::class, 'registro_create'])->name('registro');
 
 Route::get('/admin/mi_unidad', [App\Http\Controllers\CarpetaController::class, 'index'])->name('mi_unidad.index')->middleware('auth');
-
 Route::post('/admin/mi_unidad', [App\Http\Controllers\CarpetaController::class, 'store'])->name('mi_unidad.store')->middleware('auth');
-Route::get('/admin/mi_unidad/carpeta/{id}', [App\Http\Controllers\CarpetaController::class, 'show'])->name('mi_unidad.carpeta')->middleware('auth');
+Route::put('/admin/mi_unidad', [App\Http\Controllers\CarpetaController::class, 'update'])->name('mi_unidad.update')->middleware('auth');
+
+Route::put('/admin/mi_unidad/carpeta', [App\Http\Controllers\CarpetaController::class, 'update_subcarpeta'])->name('mi_unidad.carpeta.update_subcarpeta')->middleware('auth');
 Route::post('/admin/mi_unidad/carpeta', [App\Http\Controllers\CarpetaController::class, 'crear_subcarpeta'])->name('mi_unidad.carpeta.crear_subcarpeta')->middleware('auth');
+Route::get('/admin/mi_unidad/carpeta/{id}', [App\Http\Controllers\CarpetaController::class, 'show'])->name('mi_unidad.carpeta')->middleware('auth');
+
+
+Route::put('/admin/mi_unidad/color', [App\Http\Controllers\CarpetaController::class, 'update_color'])->name('mi_unidad.update_color')->middleware('auth');
+Route::put('/admin/mi_unidad/color', [App\Http\Controllers\CarpetaController::class, 'update_subcarpeta_color'])->name('mi_unidad.carpeta.update_subcarpeta_color')->middleware('auth');
+
+// rRutas para archivos
+Route::post('/admin/mi_unidad/carpeta', [App\Http\Controllers\ArchivoController::class, 'upload'])->name('mi_unidad.archivo.upload')->middleware('auth');

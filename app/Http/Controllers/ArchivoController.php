@@ -14,6 +14,27 @@ class ArchivoController extends Controller
         //
     }
 
+    public function upload(Request $request)
+    {
+        // definimos el nombre nuevo
+        // correr por consola:     php artisan storage:link
+        // para crear un link del archivo para ponerlo y se vuelve public para compartir las imagenes, videos, todo
+        // el resultado:
+        // INFO  The [C:\xampp2\htdocs\sisgestionarchivos\public\storage] link
+        // has been connected to
+        // [C:\xampp2\htdocs\sisgestionarchivos\storage\app/public].
+
+        $id = $request->id;
+        $file = $request->file('file');
+        $fileName = time() . "-" . $file->getClientOriginalName();
+        // para mandarla al area de Storage
+        $request->file('file')->store($id, 'public');
+        // si no encuentra la carpeta la crea
+        // otra MANERA para mandarla al area de PUBLIC
+        //$file->move(public_path($id), $fileName);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */

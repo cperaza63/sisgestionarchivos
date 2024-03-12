@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('carpetas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
+            $table->string('color', 50)->nullable();
             $table->unsignedBigInteger('carpeta_padre_id')->nullable();
             $table->timestamps();
             $table->foreign('carpeta_padre_id')->references('id')->on('carpetas')

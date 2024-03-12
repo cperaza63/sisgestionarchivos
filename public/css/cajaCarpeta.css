@@ -1,0 +1,19 @@
+.dropdown-toggle {
+    background-color: white;
+    border: 0px;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.divcontent{
+    background-color: white;
+    border: 1px solid #c0c0c0;
+    border-radius: 10px;
+}
+
+.divcontent:hover{
+    box-shadow: 0 0 3px rgba(0,0,0,5);
+    transition: box-shadow 0.3 ease;
+}
