@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Carpeta;
 
 class CarpetaController extends Controller
@@ -12,7 +13,10 @@ class CarpetaController extends Controller
      */
     public function index()
     {
-        $carpetas = Carpeta::whereNull('carpeta_padre_id')->get();
+        $id_user = Auth::user()->id;
+        $carpetas = Carpeta::whereNull('carpeta_padre_id')
+        ->where('user_id', $id_user)
+        ->get();
 
         return view('admin.mi_unidad.index',['carpetas' => $carpetas]);
     }
@@ -36,6 +40,7 @@ class CarpetaController extends Controller
 
         $carpeta = new Carpeta();
         $carpeta->nombre = $request->nombre;
+        $carpeta->user_id = $request->user_id;
         $carpeta->save();
 
         return redirect()->route('mi_unidad.index')
@@ -51,7 +56,9 @@ class CarpetaController extends Controller
         $carpeta = Carpeta::findOrFail($id);
         // hago la llamada al modelo carpetasHijas para traerme todos los registros de esa carpeta
         $subcarpetas = $carpeta->carpetasHijas;
-        return view( 'admin.mi_unidad.show', compact('carpeta','subcarpetas') );
+        $archivos = $carpeta->archivos;
+
+        return view( 'admin.mi_unidad.show', compact('carpeta','subcarpetas', 'archivos') );
     }
 
     /**
@@ -104,6 +111,8 @@ class CarpetaController extends Controller
 
     public function crear_subcarpeta(Request $request){
 
+
+
         $request->validate(
             [
             'nombre' => 'required|max:191',
@@ -113,6 +122,7 @@ class CarpetaController extends Controller
 
         $carpeta = new Carpeta();
 
+        $carpeta->user_id = $request->user_id;
         $carpeta->nombre = $request->nombre;
         $carpeta->carpeta_padre_id = $request->carpeta_padre_id;
         $carpeta->save();

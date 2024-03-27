@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Archivo;
 use Illuminate\Http\Request;
 
 class ArchivoController extends Controller
@@ -24,11 +25,23 @@ class ArchivoController extends Controller
         // has been connected to
         // [C:\xampp2\htdocs\sisgestionarchivos\storage\app/public].
 
-        $id = $request->id;
+        $id = $request->id;                 // id del archivo
         $file = $request->file('file');
         $fileName = time() . "-" . $file->getClientOriginalName();
+        //$file->storeAs($id, $fileName, 'public');
+        $file->storeAs($id, $fileName);             // carga de forma privada
+
+        $archivo = new Archivo();
+        $archivo->carpeta_id = $request->id;
+        $archivo->nombre = $fileName;
+        $archivo->estado_archivo = 'PRIVADO';
+        $archivo->save();
+
+        return redirect()->back()
+        ->with('mensaje', 'Se cargo el archivo de manera correcta')
+        ->with('icono', 'success');
+
         // para mandarla al area de Storage
-        $request->file('file')->store($id, 'public');
         // si no encuentra la carpeta la crea
         // otra MANERA para mandarla al area de PUBLIC
         //$file->move(public_path($id), $fileName);

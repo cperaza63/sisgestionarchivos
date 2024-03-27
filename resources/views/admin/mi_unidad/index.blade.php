@@ -31,6 +31,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
+                                                        <input type="text" name="user_id" value="{{ Auth::user()->id }}" hidden>
                                                         <input type="text" class="form-control" name="nombre" required
                                                             placeholder="Coloque el nombre de la nueva categoia">
                                                     </div>

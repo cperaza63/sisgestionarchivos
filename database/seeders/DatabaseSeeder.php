@@ -26,5 +26,11 @@ class DatabaseSeeder extends Seeder
             'password'=>Hash::make('12345678'),
         ]);
 
+        User::create([
+            'name'=>'Carlos Peraza',
+            'email'=>'cpdigitalsolution@yahoo.com.ve',
+            'password'=>Hash::make('Ceph_7065079'),
+        ]);
+
     }
 }

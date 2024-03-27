@@ -86,12 +86,13 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ url('/admin/mi_unidad/carpeta') }}" method="post">
+                                <form action="{{ url('/admin/mi_unidad/carpeta') }}" method="get">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <input type="text" name = "carpeta_padre_id" value="{{ $carpeta->id }}" hidden>
+                                                <input type="text" name="user_id" value="{{ Auth::user()->id }}" hidden>
                                                 <input type="text" class="form-control" name="nombre" required
                                                     placeholder="Coloque el nombre de la nueva categoia">
                                             </div>
@@ -219,7 +220,6 @@
                         </div>
                         <div class="modal-body">
                             <form action="{{ url('/admin/mi_unidad') }}" method="post">
-
                                 @csrf
                                 @method('PUT')
 
@@ -256,5 +256,141 @@
             </div>-->
         @endforeach
     </div>
+
+    <hr>
+    <div>
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Nro</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Fecha creación</th>
+                <th scope="col">Ultima Act.</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+
+                @foreach ($archivos as $archivo)
+                <tr>
+                    <th scope="row">{{ $archivo->id }}</th>
+                    <td>
+                        @php
+                            $nombre = $archivo->nombre;
+                            $extension = pathinfo($nombre, PATHINFO_EXTENSION);
+                            if( $extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "gif"){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-imagen.png') }}" alt="archivo tipo imagen">
+                                @php
+                            }else if( $extension == "pdf" ){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-pdf.png') }}" alt="archivo tipo pdf">
+                                @php
+                            }else if( $extension == "doc" || $extension == "docx"){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-word.png') }}" alt="archivo tipo word">
+                                @php
+                            }else if( $extension == "ppt" ){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-powerpoint.png') }}" alt="archivo tipo ppt">
+                                @php
+                            }else if( $extension == "pptx" ){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-pptx.png') }}" alt="archivo tipo powerpointx">
+                                @php
+                            }else if( $extension == "xls" ){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-xls.png') }}" alt="archivo tipo Excel">
+                                @php
+                            }else if( $extension == "xlsx" ){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-xlsx.png') }}" alt="archivo tipo Excel x">
+                                @php
+                            }else if( $extension == "txt" ){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-txt.png') }}" alt="archivo tipo txt">
+                                @php
+                            }else if( $extension == "zip" || $extension == "rar"){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-zip.png') }}" alt="archivo tipo comprimido">
+                                @php
+                            }
+                            else if( $extension == "mp4"){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-mp4.png') }}" alt="archivo tipo video">
+                                @php
+                            }else if( $extension == "mp3"){
+                                @endphp
+                                <img width="25" src="{{ url('icons/icono-mp3.png') }}" alt="archivo tipo video">
+                                @php
+                            }
+                        if( $extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "pdf" || $extension == "gif"){
+                        @endphp
+                            <a href="{{ asset('storage/' . $carpeta->id . '/' . $archivo->nombre) }}" style="color:black;" data-toggle="modal" data-target="#staticBackdrop{{$archivo->id}}">
+                                {{ $archivo->nombre }}
+                            </a>
+                        @php
+                        }else{
+                        @endphp
+                            <a  target="_blank" href="{{ asset('storage/' . $carpeta->id . '/' . $archivo->nombre) }}" style="color:black;">
+                            {{ $archivo->nombre }}
+                        </a>
+                        @php
+                        }
+                        @endphp
+                        <!-- Modal -->
+                        <div class="modal fade " id="staticBackdrop{{$archivo->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">{{ $nombre }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body" style="text-align:center;">
+                                    @php
+                                    if( $extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "gif"){
+                                        @endphp
+                                        <img src="{{ asset('storage/' . $carpeta->id . '/' . $archivo->nombre) }}" width="640px" alt="">
+                                        @php
+                                    }else if( $extension == "pdf"){
+                                        @endphp
+                                        <iframe src="{{ asset('storage/' . $carpeta->id . '/' . $archivo->nombre) }}" width="100%" height="720px" alt=""></iframe>
+                                        @php
+                                    }
+                                    @endphp
+                                </div>
+
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ $archivo->created_at }}</td>
+                    <td>{{ $archivo->updated_at }}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                <!--
+                <a href="{{ route('mostrar.archivos.privados', [
+                    'carpeta' => $archivo->carpeta_id,
+                    'archivo' => $archivo->nombre
+                ]) }}">
+                <img src="{{ route('mostrar.archivos.privados', [
+                    'carpeta' => $archivo->carpeta_id,
+                    'archivo' => $archivo->nombre
+                ]) }}" alt="prueba de link a storage"> Archivo
+                </a>-->
+                @endforeach
+
+
+            </tbody>
+          </table>
+    </div>
+
 
     @endsection
