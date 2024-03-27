@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Auth::routes();
 
@@ -35,10 +36,17 @@ Route::put('/admin/mi_unidad/color', [App\Http\Controllers\CarpetaController::cl
 // rRutas para archivos
 Route::post('/admin/mi_unidad/carpeta', [App\Http\Controllers\ArchivoController::class, 'upload'])->name('mi_unidad.archivo.upload')->middleware('auth');
 
+
+Route::delete('/admin/mi_unidad/carpeta', [App\Http\Controllers\ArchivoController::class, 'eliminar_archivo'])
+->name('mi_unidad.archivo.eliminar_archivo')
+->middleware('auth');
+
 // RUTA PARA MOSTRAR ARCHIVOS PRIVADOS
 Route::get('/storage/{carpeta}/{archivo}', function($carpeta, $archivo){
-    $path = storage_path('app' . DIRECTORY_SEPARATOR . $carpeta . DIRECTORY_SEPARATOR . $archivo);
-    return response()->file($path);
-})->name('mostrar.archivos.privados')->middleware('auth');
-
-
+    if( Auth::check() ){
+        $path = storage_path('app' . DIRECTORY_SEPARATOR . $carpeta . DIRECTORY_SEPARATOR . $archivo);
+        return response()->file($path);
+    }else{
+        abort(403, 'No tiene permiso para acceder a este archivo');
+    }
+})->name('mostrar.archivos.privados');

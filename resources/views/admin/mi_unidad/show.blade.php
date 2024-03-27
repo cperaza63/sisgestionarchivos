@@ -198,8 +198,6 @@
                                         </a>
                                         <hr>
                                         <a href="#" class="dropdown-item"><i class="bi bi-trash"></i> Eliminar</a>
-
-
                                     </div>
                             </div>
                         </div>
@@ -352,7 +350,7 @@
                                     @php
                                     if( $extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "gif"){
                                         @endphp
-                                        <img src="{{ asset('storage/' . $carpeta->id . '/' . $archivo->nombre) }}" width="640px" alt="">
+                                        <img src="{{ asset('storage/' . $carpeta->id . '/' . $archivo->nombre) }}" width="400px" alt="">
                                         @php
                                     }else if( $extension == "pdf"){
                                         @endphp
@@ -372,19 +370,40 @@
                     <td>{{ $archivo->created_at }}</td>
                     <td>{{ $archivo->updated_at }}</td>
                     <td>
-                        <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                        <div class="btn-group" role="group=" aria-label="Basix Example">
+                            <form action="{{ route('mi_unidad.archivo.eliminar_archivo') }}" onclick="preguntar<?=$archivo->id;?>(event)"
+                                method="post" id="miFormulario<?=$archivo->id;?>">
+                            @csrf
+                            @method('DELETE')
+                            <input type="text" name="id" value="{{ $archivo->id }}" hidden>
+                            <button type="submit" class="btn btn-outline-danger" style="border-radius: 5px 5px 5px 5px"><i class="bi bi-trash"></i></button>
+                            </form>
+                            <script>
+                                function preguntar<?=$archivo->id?>(event) {
+                                    event.preventDefault();
+                                    Swal.fire({
+                                        title: 'Eliminar registro',
+                                        text: '¿Desea eliminar este registro?',
+                                        icon: 'question',
+                                        showDenyButton: true,
+                                        confirmButtonText: 'Eliminar',
+                                        confirmButtonColor: '#a5161d',
+                                        denyButtonColor: '#270a0a',
+                                        denyButtonText: 'Cancelar',
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            var form = $('#miFormulario<?=$archivo->id;?>');
+                                            form.submit();
+                                        }
+                                    });
+                                }
+                            </script>
+
+                            <button class="btn btn-outline-info ml-1" style="border-radius: 5px 5px 5px 5px"><i class="bi bi-share-fill"></i></button>
+                        </div>
                     </td>
                 </tr>
-                <!--
-                <a href="{{ route('mostrar.archivos.privados', [
-                    'carpeta' => $archivo->carpeta_id,
-                    'archivo' => $archivo->nombre
-                ]) }}">
-                <img src="{{ route('mostrar.archivos.privados', [
-                    'carpeta' => $archivo->carpeta_id,
-                    'archivo' => $archivo->nombre
-                ]) }}" alt="prueba de link a storage"> Archivo
-                </a>-->
+
                 @endforeach
 
 

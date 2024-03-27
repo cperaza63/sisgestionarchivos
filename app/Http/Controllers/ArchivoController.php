@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Archivo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ArchivoController extends Controller
 {
@@ -13,6 +15,24 @@ class ArchivoController extends Controller
     public function index()
     {
         //
+    }
+
+    public function eliminar_archivo(Request $request)
+    {
+        //$datos = request()->all();
+        //return response()->json($datos);
+        $id = $request->id;
+        $archivo = Archivo::find($id);
+        $estado_archivo = $archivo->estado_archivo;
+        if( $estado_archivo == "PRIVADO" ){
+            Storage::delete($archivo->carpeta_id . '/' . $archivo->nombre);
+        }else{
+            Storage::delete('public/' . $archivo->carpeta_id . '/' . $archivo->nombre);
+        }
+        Archivo::destroy($id);
+        return redirect()->back()
+        ->with('mensaje', 'El archivo fue eliminado con éxito')
+        ->with('icon', 'success');
     }
 
     public function upload(Request $request)
