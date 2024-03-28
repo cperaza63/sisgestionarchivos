@@ -26,7 +26,7 @@ Route::post('/admin/mi_unidad', [App\Http\Controllers\CarpetaController::class, 
 Route::put('/admin/mi_unidad', [App\Http\Controllers\CarpetaController::class, 'update'])->name('mi_unidad.update')->middleware('auth');
 
 Route::put('/admin/mi_unidad/carpeta', [App\Http\Controllers\CarpetaController::class, 'update_subcarpeta'])->name('mi_unidad.carpeta.update_subcarpeta')->middleware('auth');
-Route::get('/admin/mi_unidad/carpeta', [App\Http\Controllers\CarpetaController::class, 'crear_subcarpeta'])->name('mi_unidad.carpeta.crear_subcarpeta')->middleware('auth');
+Route::post('/admin/mi_unidad/carpeta/crear_subcarpeta', [App\Http\Controllers\CarpetaController::class, 'crear_subcarpeta'])->name('mi_unidad.carpeta.crear_subcarpeta')->middleware('auth');
 Route::get('/admin/mi_unidad/carpeta/{id}', [App\Http\Controllers\CarpetaController::class, 'show'])->name('mi_unidad.carpeta')->middleware('auth');
 
 
@@ -34,12 +34,12 @@ Route::put('/admin/mi_unidad/color', [App\Http\Controllers\CarpetaController::cl
 Route::put('/admin/mi_unidad/color', [App\Http\Controllers\CarpetaController::class, 'update_subcarpeta_color'])->name('mi_unidad.carpeta.update_subcarpeta_color')->middleware('auth');
 
 // rRutas para archivos
-Route::post('/admin/mi_unidad/carpeta', [App\Http\Controllers\ArchivoController::class, 'upload'])->name('mi_unidad.archivo.upload')->middleware('auth');
-
-
+Route::post('/admin/mi_unidad/carpeta/upload', [App\Http\Controllers\ArchivoController::class, 'upload'])->name('mi_unidad.archivo.upload')->middleware('auth');
 Route::delete('/admin/mi_unidad/carpeta', [App\Http\Controllers\ArchivoController::class, 'eliminar_archivo'])
 ->name('mi_unidad.archivo.eliminar_archivo')
 ->middleware('auth');
+// Ruta para cambiar el estado de un archivo de forma Privada a Publia
+Route::get('/admin/mi_unidad/carpeta', [App\Http\Controllers\ArchivoController::class, 'cambiar_de_privado_a_publico'])->name('mi_unidad.archivo.cambiar.privado.publico')->middleware('auth');
 
 // RUTA PARA MOSTRAR ARCHIVOS PRIVADOS
 Route::get('/storage/{carpeta}/{archivo}', function($carpeta, $archivo){

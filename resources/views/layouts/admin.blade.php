@@ -22,8 +22,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Sweetalert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Generar codigo QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <!-- este estilo se aplica a la caja de las carpetas -->
     <link rel="stylesheet" href="{{asset('css/cajaCarpeta.css')}}">
+
 
 </head>
 <body class="hold-transition sidebar-mini">
@@ -207,5 +211,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
+
+<script src="{{asset('js/portapapeles.js')}}"></script>
+
 </body>
 </html>

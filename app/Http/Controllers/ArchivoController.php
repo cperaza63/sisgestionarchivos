@@ -12,9 +12,29 @@ class ArchivoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function cambiar_de_privado_a_publico (Request $request)
     {
-        //
+        //$datos = request()->all();
+        //return response()->json($datos);
+        $id = $request->id;
+        $estado_archivo = $request->estado;
+        $archivo = Archivo::find($id);
+        $carpeta_id = $archivo->carpeta_id;
+        $nombre = $archivo->nombre;
+        $archivo->estado_archivo = $estado_archivo;
+        $archivo->save();
+        if( $estado_archivo == "PRIVADO" ){
+            $ruta_archivo_desde = "public/" . $carpeta_id ."/". $nombre;
+            $ruta_archivo_hasta = $carpeta_id ."/". $nombre;
+        }else{
+            $ruta_archivo_desde = $carpeta_id ."/". $nombre;
+            $ruta_archivo_hasta = "public/" . $carpeta_id ."/". $nombre;
+        }
+        Storage::move($ruta_archivo_desde, $ruta_archivo_hasta);
+
+        return redirect()->back()
+        ->with('mensaje', 'El archivo cambio a Estado ' . $estado_archivo)
+        ->with('icon', 'success');
     }
 
     public function eliminar_archivo(Request $request)

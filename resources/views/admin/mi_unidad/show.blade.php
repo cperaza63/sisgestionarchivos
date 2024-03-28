@@ -6,6 +6,16 @@
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css">
     <!-- fin de la conexion -->
 
+    @if ( $message = Session::get('mensaje') )
+    <script>
+        Swal.fire({
+            title: "Atención",
+            text: "{{ $message }}",
+            icon: "Exito"
+        });
+    </script>
+    @endif
+
     <div class="row mb-2">
 
         <div class="col-sm-9">
@@ -44,7 +54,7 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="{{ url('/admin/mi_unidad/carpeta') }}" method="post" enctype="multipart/form-data" class="dropzone" id="myDropzone">
+                                            <form action="{{ url('/admin/mi_unidad/carpeta/upload') }}" method="post" enctype="multipart/form-data" class="dropzone" id="myDropzone">
                                                 @csrf
 
                                                 <input type="text" name="id" value="{{ $carpeta->id }}" hidden>
@@ -86,7 +96,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ url('/admin/mi_unidad/carpeta') }}" method="get">
+                                <form action="{{ url('/admin/mi_unidad/carpeta/crear_subcarpeta') }}" method="post">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-12">
@@ -94,7 +104,7 @@
                                                 <input type="text" name = "carpeta_padre_id" value="{{ $carpeta->id }}" hidden>
                                                 <input type="text" name="user_id" value="{{ Auth::user()->id }}" hidden>
                                                 <input type="text" class="form-control" name="nombre" required
-                                                    placeholder="Coloque el nombre de la nueva categoia">
+                                                    placeholder="Coloque el nombre de la nueva categoria">
                                             </div>
                                         </div>
                                     </div>
@@ -152,7 +162,7 @@
                                                 <form action="{{ url('/admin/mi_unidad/color') }}" method="post">
                                                     @csrf
                                                     @method('PUT')
-                                                    <input name="id" type="text" value="{{$subcarpeta->id}}" >
+                                                    <input name="id" type="text" value="{{$subcarpeta->id}}" hidden>
                                                     <input name="color" type="text" value="blue" hidden>
                                                     <button type="submit" style="background-color:white; border:0px;">
                                                         <i class="bi bi-circle-fill" style="color:blue"></i>
@@ -264,6 +274,7 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Fecha creación</th>
                 <th scope="col">Ultima Act.</th>
+                <th scope="col">Estado</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -369,6 +380,7 @@
                     </td>
                     <td>{{ $archivo->created_at }}</td>
                     <td>{{ $archivo->updated_at }}</td>
+                    <td>{{ $archivo->estado_archivo }}</td>
                     <td>
                         <div class="btn-group" role="group=" aria-label="Basix Example">
                             <form action="{{ route('mi_unidad.archivo.eliminar_archivo') }}" onclick="preguntar<?=$archivo->id;?>(event)"
@@ -399,17 +411,101 @@
                                 }
                             </script>
 
-                            <button class="btn btn-outline-info ml-1" style="border-radius: 5px 5px 5px 5px"><i class="bi bi-share-fill"></i></button>
+                            <button data-toggle="modal" data-target="#compartirModal{{ $archivo->id }}"
+                                class="btn btn-outline-info ml-1"
+                                style="border-radius: 5px 5px 5px 5px">
+                                <i class="bi bi-share-fill"></i>
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="compartirModal{{$archivo->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Archivo: {{ $archivo->nombre }}
+                                    @php
+                                        if ($archivo->estado_archivo == "PRIVADO"){
+                                            $titulo ="CAMBIAR A PUBLICO";
+                                            echo " (Privado)";
+                                        }else{
+                                            $titulo ="CAMBIAR A PRIVADO";
+                                            echo " - (Pública)";
+                                        }
+                                    @endphp
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                    Aqui puedes cambiar de estado del archivo, ademas de compartir el archivo con otras personas....
+                                    </div>
+                                    <div class="modal-footer">
+
+                                    <?php
+                                    if ($archivo->estado_archivo == "PRIVADO"){
+                                        $estado = "PUBLICO";
+                                    }else{
+                                        $estado = "PRIVADO";
+                                    }
+                                    ?>
+                                    <form method="get" action="{{ route('mi_unidad.archivo.cambiar.privado.publico') }}">
+                                    @csrf
+                                        <input name="id" type="text" value="{{ $archivo->id }}" hidden>
+                                        <input name="estado" type="text" value="{{ $estado }}" hidden>
+                                        <button type="submit" class="btn btn-primary">Cambiar a {{ $estado }}
+                                        </button>
+                                        @php
+                                        if ( $estado != "PUBLICO" ){
+                                        @endphp
+                                        <hr>
+                                        <strong>
+                                        Haga click sobre el campo link para seleccionar todo el texto al enlace:
+                                        </strong>
+                                        <input onclick="this.select();" id="inputP1" size="60" type="text" value="{{ asset('storage/' . $carpeta->id.'/' . $archivo->nombre) }}"
+                                        class="form.control"><br>
+                                        <button id="botonCopiar" onclick="copiarAlPortapapeles('inputP1')" type="button" class="btn btn-outline-success">Copiar enlace</button>
+                                        @php
+                                        }
+                                        @endphp
+
+                                        <div align="center" id="qrcode{{ $archivo->id }}"></div>
+                                        <script>
+                                            var opciones = {
+                                                width:200,
+                                                height:200
+                                            };
+                                            var texto = "{{ asset('storage/' . $carpeta->id.'/' . $archivo->nombre) }}";
+                                            var qrcode= new QRCode("qrcode{{ $archivo->id }}", opciones);
+                                            qrcode.makeCode(texto);
+                                        </script>
+
+                                    </form>
+                                    </button>
+                                </div>
+                                </div>
+
+                                </div>
+                            </div>
                         </div>
                     </td>
                 </tr>
 
                 @endforeach
-
-
             </tbody>
           </table>
+<!--
+        <p id="p1">P1: Soy el primer párrafo</p>
+        <p id="p2">P2: Soy el segundo párrafo</p>
+        <button onclick="copiarAlPortapapeles('p1')">Copiar P1</button>
+        <button onclick="copiarAlPortapapeles('p2')">Copiar P2</button>
+        <br/><br/>
+        <input type="text" placeholder="Pega aquí para probar" />
+-->
+
     </div>
 
-
     @endsection
+
+
